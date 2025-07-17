@@ -3,7 +3,7 @@ import { useJourney } from '../../context/JourneyContext';
 import axios from '../../lib/axios';
 
 const CreateJourneyTab: React.FC = () => {
-  const { journey, updateJourney,addNode } = useJourney();
+  const { journey, updateJourney } = useJourney();
   const [name, setName] = useState(journey.name);
   const [description, setDescription] = useState(journey.description);
 
@@ -24,30 +24,30 @@ const CreateJourneyTab: React.FC = () => {
 
     
     // // Create start and end nodes if they don't exist
-    const hasStartNode = journey.nodes.some(node => node.type === 'start');
-    const hasEndNode = journey.nodes.some(node => node.type === 'end');
+    // const hasStartNode = journey.nodes.some(node => node.type === 'start');
+    // const hasEndNode = journey.nodes.some(node => node.type === 'end');
     
-    if (!hasStartNode) {
-      addNode({
-        name: 'Start',
-        type: 'start',
-        description: 'Starting point of the journey',
-        properties: [],
-        x: 100,
-        y: 100
-      });
-    }
+    // if (!hasStartNode) {
+    //   addNode({
+    //     name: 'Start',
+    //     type: 'start',
+    //     description: 'Starting point of the journey',
+    //     properties: [],
+    //     x: 100,
+    //     y: 100
+    //   });
+    // }
     
-    if (!hasEndNode) {
-      addNode({
-        name: 'End',
-        type: 'end',
-        description: 'End point of the journey',
-        properties: [],
-        x: 500,
-        y: 100
-      });
-    }
+    // if (!hasEndNode) {
+    //   addNode({
+    //     name: 'End',
+    //     type: 'end',
+    //     description: 'End point of the journey',
+    //     properties: [],
+    //     x: 500,
+    //     y: 100
+    //   });
+    // }
   };
 
   return (

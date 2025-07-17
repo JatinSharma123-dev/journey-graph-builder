@@ -67,12 +67,15 @@ const PreviewTab: React.FC = () => {
     setNodePositions(positions);
 
     // Draw edges
-    journey.edges.forEach(edge => {
-      const fromNode = nodes.find(n => n.id === edge.fromNodeId);
-      const toNode = nodes.find(n => n.id === edge.toNodeId);
-      
+    const filteredEdges = journey.edges.filter(edge => {
+  const fromNode = journey.nodes.find(n => n.id === edge.fromNodeId);
+  return fromNode && fromNode.type !== 'dead_end';
+});
+filteredEdges.forEach(edge => {
+  const fromNode = nodes.find(n => n.id === edge.fromNodeId);
+  const toNode = nodes.find(n => n.id === edge.toNodeId);
       // Don't draw edges from dead_end nodes
-      if (fromNode && toNode && fromNode.type !== 'dead_end') {
+      if (fromNode && toNode) {
         // Draw line
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', fromNode.x.toString());
@@ -91,7 +94,7 @@ const PreviewTab: React.FC = () => {
           
           const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
           text.setAttribute('x', midX.toString());
-          text.setAttribute('y', (midY - 5).toString());
+          text.setAttribute('y', (midY - 4).toString());
           text.setAttribute('text-anchor', 'middle');
           text.setAttribute('font-size', '12');
           text.setAttribute('fill', '#6B7280');
@@ -108,7 +111,7 @@ const PreviewTab: React.FC = () => {
       const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       circle.setAttribute('cx', node.x.toString());
       circle.setAttribute('cy', node.y.toString());
-      circle.setAttribute('r', '30');
+      circle.setAttribute('r', '35');
       circle.setAttribute('fill', getNodeColor(node.type));
       circle.setAttribute('stroke', selectedNode?.id === node.id ? '#3B82F6' : '#374151');
       circle.setAttribute('stroke-width', selectedNode?.id === node.id ? '3' : '2');
@@ -121,7 +124,7 @@ const PreviewTab: React.FC = () => {
       text.setAttribute('x', node.x.toString());
       text.setAttribute('y', (node.y + 5).toString());
       text.setAttribute('text-anchor', 'middle');
-      text.setAttribute('font-size', '12');
+      text.setAttribute('font-size', '10');
       text.setAttribute('font-weight', 'bold');
       text.setAttribute('fill', '#1F2937');
       text.setAttribute('font-family', 'system-ui, sans-serif');
@@ -293,7 +296,7 @@ const PreviewTab: React.FC = () => {
         <div>
           <div className="flex items-center gap-2 mb-3">
           <Settings size={16} className="text-gray-500" />
-          <h4 className="font-medium text-gray-900">Basic Information</h4>
+          <h4 className="font-medium text-gray-900">Node Information</h4>
           </div>
           <div className="bg-gray-50 rounded-lg p-4 space-y-2">
           <div>
@@ -387,7 +390,7 @@ const PreviewTab: React.FC = () => {
         <div>
           <div className="flex items-center gap-2 mb-3">
           <Link size={16} className="text-gray-500" />
-          <h4 className="font-medium text-gray-900">Connections</h4>
+          <h4 className="font-medium text-gray-900">Edges</h4>
           </div>
           <div className="space-y-3">
           {(() => {
@@ -396,7 +399,7 @@ const PreviewTab: React.FC = () => {
             <>
               {edges.incoming.length > 0 && (
               <div>
-                <h5 className="text-sm font-medium text-gray-700 mb-2">Incoming ({edges.incoming.length})</h5>
+                <h5 className="text-sm font-medium text-gray-700 mb-2">Incoming edges ({edges.incoming.length})</h5>
                 <div className="space-y-1">
                 {edges.incoming.map(edge => {
                   const fromNode = journey.nodes.find(n => n.id === edge.fromNodeId);
@@ -417,7 +420,7 @@ const PreviewTab: React.FC = () => {
               
               {edges.outgoing.length > 0 && (
               <div>
-                <h5 className="text-sm font-medium text-gray-700 mb-2">Outgoing ({edges.outgoing.length})</h5>
+                <h5 className="text-sm font-medium text-gray-700 mb-2">Outgoing edges ({edges.outgoing.length})</h5>
                 <div className="space-y-1">
                 {edges.outgoing.map(edge => {
                   const toNode = journey.nodes.find(n => n.id === edge.toNodeId);

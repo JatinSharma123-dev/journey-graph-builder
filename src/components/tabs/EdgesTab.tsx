@@ -183,11 +183,11 @@ const EdgesTab: React.FC = () => {
                     <div className="flex items-center gap-3 mb-2">
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-gray-900">
-                          {getNodeName(edge.fromNodeId)}
+                          <span className="text-sm text-gray-600">From Node :</span> {getNodeName(edge.fromNodeId)}
                         </span>
                         <span className="text-gray-400">→</span>
                         <span className="font-medium text-gray-900">
-                          {getNodeName(edge.toNodeId)}
+                          <span className="text-sm text-gray-600">To Node :</span>{getNodeName(edge.toNodeId)}
                         </span>
                       </div>
                     </div>

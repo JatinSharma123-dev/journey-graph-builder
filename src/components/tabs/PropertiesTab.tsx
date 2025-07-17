@@ -84,19 +84,27 @@ const PropertiesTab: React.FC = () => {
                 />
               </div>
 
-              <div>
+                <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Type *
                 </label>
-                <input
-                  type="text"
+                <select
                   value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, type: e.target.value as Property['type'] })}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="e.g., string, number, boolean, array, object"
-                />
-              </div>
+                >
+                  <option value="" disabled>Select type</option>
+                  <option value="STRING">STRING</option>
+                  <option value="NUMBER">NUMBER</option>
+                  <option value="BOOLEAN">BOOLEAN</option>
+                  <option value="DATE">DATE</option>
+                  <option value="TIMESTAMP">TIMESTAMP</option>
+                  <option value="RANGE">RANGE</option>
+                  <option value="LIST">LIST</option>
+                  <option value="MAP">MAP</option>
+                </select>
+                </div>
             </div>
 
             <div>

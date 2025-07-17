@@ -100,19 +100,22 @@ const NodesTab: React.FC = () => {
                 />
               </div>
 
-              <div>
+                <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Type *
                 </label>
-                <input
-                  type="text"
+                <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="e.g., action, condition, gateway"
-                />
-              </div>
+                >
+                  <option value="" disabled>Select type</option>
+                  <option value="dead_end">DEAD_END</option>
+                  <option value="custom">CUSTOM</option>
+                  <option value="loader">LOADER</option>
+                </select>
+                </div>
             </div>
 
             <div>

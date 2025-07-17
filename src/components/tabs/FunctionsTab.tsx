@@ -435,15 +435,17 @@ const handleOutputPropertyKeyBlur = (oldKey: string) => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Type *
                 </label>
-                <input
-                  type="text"
+                <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="e.g., api, webhook, service"
-                />
-              </div>
+                >
+                  <option value="" disabled>Select type</option>
+                  <option value="API">API</option>
+                  <option value="KAFKA">KAFKA</option>
+                </select>
+                </div>
             </div>
 
             <div className="border-t pt-4">
@@ -491,10 +493,52 @@ const handleOutputPropertyKeyBlur = (oldKey: string) => {
                     <option value="POST">POST</option>
                     <option value="PUT">PUT</option>
                     <option value="DELETE">DELETE</option>
-                    <option value="PATCH">PATCH</option>
                   </select>
                 </div>
 
+              </div>
+
+              
+
+              <div className="mt-4">
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-sm font-medium text-gray-700">Headers</label>
+                  <button
+                    type="button"
+                    onClick={addHeaderField}
+                    className="text-blue-600 hover:text-blue-800 text-sm"
+                  >
+                    + Add Header
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {Object.entries(formData.config.headers).map(([key, value]) => (
+                    <div key={key} className="flex gap-2">
+                      <input
+                        type="text"
+                        value={headerKeys[key] ?? key}
+                        onChange={(e) => handleHeaderKeyChange(key, e.target.value)}
+                        onBlur={() => handleHeaderKeyBlur(key)}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Header key"
+                      />
+                      <input
+                        type="text"
+                        value={value}
+                        onChange={(e) => updateHeaderField(key, e.target.value)}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Header value"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeHeaderField(key)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="mt-4">
@@ -529,47 +573,6 @@ const handleOutputPropertyKeyBlur = (oldKey: string) => {
                       <button
                         type="button"
                         onClick={() => removeHeaderParamField(key)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <X size={16} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <div className="flex justify-between items-center mb-2">
-                  <label className="block text-sm font-medium text-gray-700">Headers</label>
-                  <button
-                    type="button"
-                    onClick={addHeaderField}
-                    className="text-blue-600 hover:text-blue-800 text-sm"
-                  >
-                    + Add Header
-                  </button>
-                </div>
-                <div className="space-y-2">
-                  {Object.entries(formData.config.headers).map(([key, value]) => (
-                    <div key={key} className="flex gap-2">
-                      <input
-                        type="text"
-                        value={headerKeys[key] ?? key}
-                        onChange={(e) => handleHeaderKeyChange(key, e.target.value)}
-                        onBlur={() => handleHeaderKeyBlur(key)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Header key"
-                      />
-                      <input
-                        type="text"
-                        value={value}
-                        onChange={(e) => updateHeaderField(key, e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Header value"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeHeaderField(key)}
                         className="text-red-600 hover:text-red-800"
                       >
                         <X size={16} />

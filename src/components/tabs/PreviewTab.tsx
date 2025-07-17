@@ -299,22 +299,22 @@ filteredEdges.forEach(edge => {
           <h4 className="font-medium text-gray-900">Node Information</h4>
           </div>
           <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-          <div>
+            <div className="flex justify-between gap-2">
+          <div className='w-1/3'>
             <span className="text-sm font-medium text-gray-700">Name:</span>
             <span className="ml-2 text-sm text-gray-900">{selectedNode.name}</span>
           </div>
-          <div>
+          <div className='w-1/3'>
             <span className="text-sm font-medium text-gray-700">Type:</span>
             <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
             {selectedNode.type}
             </span>
           </div>
-          {selectedNode.description && (
-            <div>
+            <div className='flex gap-2 w-1/3'>
             <span className="text-sm font-medium text-gray-700">Description:</span>
-            <p className="mt-1 text-sm text-gray-900">{selectedNode.description}</p>
+            <p className="text-sm text-gray-900 break-words">{selectedNode.description ? selectedNode.description : 'No description'}</p>
             </div>
-          )}
+          </div>
           </div>
         </div>
 

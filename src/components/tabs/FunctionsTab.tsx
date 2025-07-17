@@ -2,6 +2,13 @@ import React, { useState } from 'react';
 import { Plus, Edit, Trash2, Save, X } from 'lucide-react';
 import { useJourney } from '../../context/JourneyContext';
 import { Function } from '../../types/journey';
+import { useMemo } from 'react';
+
+interface FunctionHeader {
+  key: string;
+  type: 'custom' | 'property';
+  value: string;
+}
 
 const FunctionsTab: React.FC = () => {
   const { journey, addFunction, updateFunction, deleteFunction } = useJourney();
@@ -11,6 +18,8 @@ const FunctionsTab: React.FC = () => {
   const [extraFieldKeys, setExtraFieldKeys] = useState<{ [key: string]: string }>({});
   const [inputPropertyKeys, setInputPropertyKeys] = useState<{ [key: string]: string }>({});
   const [outputPropertyKeys, setOutputPropertyKeys] = useState<{ [key: string]: string }>({});
+  const [requestBodyKeys, setRequestBodyKeys] = useState<{ [key: string]: string }>({});
+  const [requestBodyPathKeys, setRequestBodyPathKeys] = useState<{ [key: string]: string }>({});
   const [formData, setFormData] = useState({
     name: '',
     type: '',
@@ -19,8 +28,9 @@ const FunctionsTab: React.FC = () => {
       path: '',
       method: 'GET',
       header_params: {} as { [key: string]: string },
-      headers: {} as { [key: string]: string },
-      extraFields: {} as { [key: string]: string }
+      headers: [] as FunctionHeader[],
+      requestBody: {} as { [key: string]: string },
+      requestBodyPath: {} as { [key: string]: string }
     },
     input_properties: {} as { [key: string]: string },
     output_properties: {} as { [key: string]: string }
@@ -62,46 +72,138 @@ const handleHeaderKeyChange = (oldKey: string, newKey: string) => {
 const handleHeaderKeyBlur = (oldKey: string) => {
   const newKey = headerKeys[oldKey] || oldKey;
   if (newKey !== oldKey && newKey.trim() !== '') {
-    const value = formData.config.headers[oldKey];
-    const newHeaders = { ...formData.config.headers };
-    delete newHeaders[oldKey];
-    newHeaders[newKey] = value;
-    setFormData(prev => ({
-      ...prev,
-      config: { ...prev.config, headers: newHeaders }
-    }));
-    setHeaderKeys(prev => {
-      const updated = { ...prev };
-      delete updated[oldKey];
-      return updated;
+    const value = formData.config.headers.find(h => h.key === oldKey)?.value;
+    setFormData(prev => {
+      const headers = [...prev.config.headers];
+      const index = headers.findIndex(h => h.key === oldKey);
+      if (index !== -1) {
+        headers[index] = { ...headers[index], key: newKey };
+      }
+      return {
+        ...prev,
+        config: {
+          ...prev.config,
+          headers
+        }
+      };
     });
   }
 };
 
-const handleExtraFieldKeyChange = (oldKey: string, newKey: string) => {
-  setExtraFieldKeys(prev => ({
-    ...prev,
-    [oldKey]: newKey
-  }));
+const handleRequestBodyKeyChange = (oldKey: string, newKey: string) => {
+  setRequestBodyKeys(prev => ({ ...prev, [oldKey]: newKey }));
 };
-
-const handleExtraFieldKeyBlur = (oldKey: string) => {
-  const newKey = extraFieldKeys[oldKey] || oldKey;
+const handleRequestBodyKeyBlur = (oldKey: string) => {
+  const newKey = requestBodyKeys[oldKey] || oldKey;
   if (newKey !== oldKey && newKey.trim() !== '') {
-    const value = formData.config.extraFields[oldKey];
-    const newFields = { ...formData.config.extraFields };
+    const value = formData.config.requestBody[oldKey];
+    const newFields = { ...formData.config.requestBody };
     delete newFields[oldKey];
     newFields[newKey] = value;
     setFormData(prev => ({
       ...prev,
-      config: { ...prev.config, extraFields: newFields }
+      config: { ...prev.config, requestBody: newFields }
     }));
-    setExtraFieldKeys(prev => {
+    setRequestBodyKeys(prev => {
       const updated = { ...prev };
       delete updated[oldKey];
       return updated;
     });
   }
+};
+const addRequestBodyField = () => {
+  const key = `body_${Date.now()}`;
+  setFormData(prev => ({
+    ...prev,
+    config: {
+      ...prev.config,
+      requestBody: {
+        ...prev.config.requestBody,
+        [key]: ''
+      }
+    }
+  }));
+};
+const updateRequestBodyField = (key: string, value: string) => {
+  setFormData(prev => ({
+    ...prev,
+    config: {
+      ...prev.config,
+      requestBody: {
+        ...prev.config.requestBody,
+        [key]: value
+      }
+    }
+  }));
+};
+const removeRequestBodyField = (key: string) => {
+  setFormData(prev => ({
+    ...prev,
+    config: {
+      ...prev.config,
+      requestBody: Object.fromEntries(
+        Object.entries(prev.config.requestBody).filter(([k]) => k !== key)
+      )
+    }
+  }));
+};
+
+const handleRequestBodyPathKeyChange = (oldKey: string, newKey: string) => {
+  setRequestBodyPathKeys(prev => ({ ...prev, [oldKey]: newKey }));
+};
+const handleRequestBodyPathKeyBlur = (oldKey: string) => {
+  const newKey = requestBodyPathKeys[oldKey] || oldKey;
+  if (newKey !== oldKey && newKey.trim() !== '') {
+    const value = formData.config.requestBodyPath[oldKey];
+    const newFields = { ...formData.config.requestBodyPath };
+    delete newFields[oldKey];
+    newFields[newKey] = value;
+    setFormData(prev => ({
+      ...prev,
+      config: { ...prev.config, requestBodyPath: newFields }
+    }));
+    setRequestBodyPathKeys(prev => {
+      const updated = { ...prev };
+      delete updated[oldKey];
+      return updated;
+    });
+  }
+};
+const addRequestBodyPathField = () => {
+  const key = `bodypath_${Date.now()}`;
+  setFormData(prev => ({
+    ...prev,
+    config: {
+      ...prev.config,
+      requestBodyPath: {
+        ...prev.config.requestBodyPath,
+        [key]: ''
+      }
+    }
+  }));
+};
+const updateRequestBodyPathField = (key: string, value: string) => {
+  setFormData(prev => ({
+    ...prev,
+    config: {
+      ...prev.config,
+      requestBodyPath: {
+        ...prev.config.requestBodyPath,
+        [key]: value
+      }
+    }
+  }));
+};
+const removeRequestBodyPathField = (key: string) => {
+  setFormData(prev => ({
+    ...prev,
+    config: {
+      ...prev.config,
+      requestBodyPath: Object.fromEntries(
+        Object.entries(prev.config.requestBodyPath).filter(([k]) => k !== key)
+      )
+    }
+  }));
 };
 
 const handleInputPropertyKeyChange = (oldKey: string, newKey: string) => {
@@ -165,8 +267,9 @@ const handleOutputPropertyKeyBlur = (oldKey: string) => {
         path: '',
         method: 'GET',
         header_params: {},
-        headers: {},
-        extraFields: {}
+        headers: [],
+        requestBody: {},
+        requestBodyPath: {}
       },
       input_properties: {},
       output_properties: {}
@@ -181,8 +284,7 @@ const handleOutputPropertyKeyBlur = (oldKey: string) => {
     const functionData = {
       ...formData,
       config: {
-        ...formData.config,
-        ...formData.config.extraFields
+        ...formData.config
       }
     };
     
@@ -197,7 +299,7 @@ const handleOutputPropertyKeyBlur = (oldKey: string) => {
 
   const handleEdit = (func: Function) => {
     setEditingFunction(func);
-    const { host, path, method, header_params, headers, ...extraFields } = func.config;
+    const { host, path, method, header_params, headers, requestBody = {}, requestBodyPath = {}, ...rest } = func.config;
     setFormData({
       name: func.name,
       type: func.type,
@@ -206,8 +308,9 @@ const handleOutputPropertyKeyBlur = (oldKey: string) => {
         path,
         method,
         header_params,
-        headers,
-        extraFields
+        headers: headers || [],
+        requestBody,
+        requestBodyPath
       },
       input_properties: func.input_properties,
       output_properties: func.output_properties
@@ -220,42 +323,63 @@ const handleOutputPropertyKeyBlur = (oldKey: string) => {
   };
 
   const addHeaderField = () => {
-    const key = `header_${Date.now()}`;
     setFormData(prev => ({
       ...prev,
       config: {
         ...prev.config,
-        headers: {
+        headers: [
           ...prev.config.headers,
-          [key]: ''
-        }
+          { key: '', type: 'custom', value: '' }
+        ]
       }
     }));
   };
 
-  const updateHeaderField = (key: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      config: {
-        ...prev.config,
-        headers: {
-          ...prev.config.headers,
-          [key]: value
+  const updateHeaderField = (index: number, field: keyof FunctionHeader, value: string) => {
+    setFormData(prev => {
+      const headers = [...prev.config.headers];
+      headers[index] = { ...headers[index], [field]: value };
+      // If type changes, reset value if switching to property
+      if (field === 'type' && value === 'property') {
+        headers[index].value = '';
+      }
+
+      let newHeaderParams = { ...prev.config.header_params };
+      let newInputProperties = { ...prev.input_properties };
+      // If the value field is changed and type is property, update header_params
+      if (field === 'value' && headers[index].type === 'property') {
+        // value is property id
+        const prop = journey.properties.find(p => p.id === value);
+        if (prop) {
+          newHeaderParams[prop.key] = prop.type;
+          newInputProperties[prop.key] = prop.type;
         }
       }
-    }));
+
+      return {
+        ...prev,
+        config: {
+          ...prev.config,
+          headers,
+          header_params: newHeaderParams
+        },
+        input_properties: newInputProperties
+      };
+    });
   };
 
-  const removeHeaderField = (key: string) => {
-    setFormData(prev => ({
-      ...prev,
-      config: {
-        ...prev.config,
-        headers: Object.fromEntries(
-          Object.entries(prev.config.headers).filter(([k]) => k !== key)
-        )
-      }
-    }));
+  const removeHeaderField = (index: number) => {
+    setFormData(prev => {
+      const headers = [...prev.config.headers];
+      headers.splice(index, 1);
+      return {
+        ...prev,
+        config: {
+          ...prev.config,
+          headers
+        }
+      };
+    });
   };
 
   const addHeaderParamField = () => {
@@ -292,45 +416,6 @@ const handleOutputPropertyKeyBlur = (oldKey: string) => {
         ...prev.config,
         header_params: Object.fromEntries(
           Object.entries(prev.config.header_params).filter(([k]) => k !== key)
-        )
-      }
-    }));
-  };
-
-  const addExtraField = () => {
-    const key = `field_${Date.now()}`;
-    setFormData(prev => ({
-      ...prev,
-      config: {
-        ...prev.config,
-        extraFields: {
-          ...prev.config.extraFields,
-          [key]: ''
-        }
-      }
-    }));
-  };
-
-  const updateExtraField = (key: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      config: {
-        ...prev.config,
-        extraFields: {
-          ...prev.config.extraFields,
-          [key]: value
-        }
-      }
-    }));
-  };
-
-  const removeExtraField = (key: string) => {
-    setFormData(prev => ({
-      ...prev,
-      config: {
-        ...prev.config,
-        extraFields: Object.fromEntries(
-          Object.entries(prev.config.extraFields).filter(([k]) => k !== key)
         )
       }
     }));
@@ -395,6 +480,70 @@ const handleOutputPropertyKeyBlur = (oldKey: string) => {
       )
     }));
   };
+
+  // JSON Previewer logic
+  const jsonPreview = useMemo(() => {
+    // Build req_body as a JSON string with property keys as values
+    const reqBodyObj: Record<string, string> = {};
+    Object.entries(formData.config.requestBody).forEach(([key, propId]) => {
+      // Use the property key if found, else fallback to the propId
+      const prop = journey.properties.find(p => p.id === propId);
+      reqBodyObj[key] = prop ? prop.key : propId;
+    });
+    const req_body = JSON.stringify(reqBodyObj);
+
+    // req_body_path: map property key (from propId) to value
+    const req_body_path: Record<string, string> = {};
+    Object.entries(formData.config.requestBodyPath).forEach(([propId, path]) => {
+      const prop = journey.properties.find(p => p.id === propId);
+      req_body_path[prop ? prop.key : propId] = path;
+    });
+
+    // header_param: just use formData.config.header_params
+    const header_param = { ...formData.config.header_params };
+
+    // headers: key is header.key, value is either header.value (custom) or property key (if type is property)
+    const headers: Record<string, string> = {};
+    formData.config.headers.forEach(h => {
+      if (!h.key) return;
+      if (h.type === 'custom') {
+        headers[h.key] = h.value;
+      } else if (h.type === 'property') {
+        const prop = journey.properties.find(p => p.id === h.value);
+        headers[h.key] = prop ? prop.key : h.value;
+      }
+    });
+
+    // inputProperties: key is property key, value is type
+    const inputProperties: Record<string, string> = {};
+    Object.entries(formData.input_properties).forEach(([key, type]) => {
+      inputProperties[key] = type;
+    });
+
+    // outputProperties: key is property key, value is type
+    const outputProperties: Record<string, string> = {};
+    Object.entries(formData.output_properties).forEach(([key, type]) => {
+      outputProperties[key] = type;
+    });
+
+    const previewObj = {
+      name: formData.name,
+      type: formData.type,
+      config: {
+        host: formData.config.host,
+        path: formData.config.path,
+        method: formData.config.method,
+        req_body,
+        req_body_path,
+        header_param,
+        headers
+      },
+      inputProperties,
+      outputProperties
+    };
+
+    return JSON.stringify(previewObj, null, 2);
+  }, [formData, journey.properties]);
 
   return (
     <div>
@@ -512,26 +661,46 @@ const handleOutputPropertyKeyBlur = (oldKey: string) => {
                   </button>
                 </div>
                 <div className="space-y-2">
-                  {Object.entries(formData.config.headers).map(([key, value]) => (
-                    <div key={key} className="flex gap-2">
+                  {formData.config.headers.map((header, idx) => (
+                    <div key={idx} className="flex gap-2">
                       <input
                         type="text"
-                        value={headerKeys[key] ?? key}
-                        onChange={(e) => handleHeaderKeyChange(key, e.target.value)}
-                        onBlur={() => handleHeaderKeyBlur(key)}
+                        value={header.key}
+                        onChange={e => updateHeaderField(idx, 'key', e.target.value)}
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         placeholder="Header key"
                       />
-                      <input
-                        type="text"
-                        value={value}
-                        onChange={(e) => updateHeaderField(key, e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Header value"
-                      />
+                      <select
+                        value={header.type}
+                        onChange={e => updateHeaderField(idx, 'type', e.target.value)}
+                        className="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="custom">Custom</option>
+                        <option value="property">Property</option>
+                      </select>
+                      {header.type === 'custom' ? (
+                        <input
+                          type="text"
+                          value={header.value}
+                          onChange={e => updateHeaderField(idx, 'value', e.target.value)}
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Header value"
+                        />
+                      ) : (
+                        <select
+                          value={header.value}
+                          onChange={e => updateHeaderField(idx, 'value', e.target.value)}
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                          <option value="" disabled>Select property</option>
+                          {journey.properties.map((prop) => (
+                            <option key={prop.id} value={prop.id}>{prop.key}</option>
+                          ))}
+                        </select>
+                      )}
                       <button
                         type="button"
-                        onClick={() => removeHeaderField(key)}
+                        onClick={() => removeHeaderField(idx)}
                         className="text-red-600 hover:text-red-800"
                       >
                         <X size={16} />
@@ -584,36 +753,98 @@ const handleOutputPropertyKeyBlur = (oldKey: string) => {
 
               <div className="mt-4">
                 <div className="flex justify-between items-center mb-2">
-                  <label className="block text-sm font-medium text-gray-700">Extra Fields</label>
+                  <label className="block text-sm font-medium text-gray-700">Request Body</label>
                   <button
                     type="button"
-                    onClick={addExtraField}
+                    onClick={addRequestBodyField}
                     className="text-blue-600 hover:text-blue-800 text-sm"
                   >
-                    + Add Field
+                    + Add Body Field
                   </button>
                 </div>
                 <div className="space-y-2">
-                  {Object.entries(formData.config.extraFields).map(([key, value]) => (
+                  {Object.entries(formData.config.requestBody).map(([key, value]) => (
                     <div key={key} className="flex gap-2">
                       <input
                         type="text"
-                        value={extraFieldKeys[key] ?? key}
-                        onChange={(e) => handleExtraFieldKeyChange(key, e.target.value)}
-                        onBlur={() => handleExtraFieldKeyBlur(key)}
+                        value={requestBodyKeys[key] ?? key}
+                        onChange={e => handleRequestBodyKeyChange(key, e.target.value)}
+                        onBlur={() => handleRequestBodyKeyBlur(key)}
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Field key"
+                        placeholder="Body key"
                       />
+                      <select
+                        value={value}
+                        onChange={e => updateRequestBodyField(key, e.target.value)}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="" disabled>Select property</option>
+                        {journey.properties.map((prop) => (
+                          <option key={prop.id} value={prop.id}>{prop.key}</option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() => removeRequestBodyField(key)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-sm font-medium text-gray-700">Request Body Path</label>
+                  <button
+                    type="button"
+                    onClick={addRequestBodyPathField}
+                    className="text-blue-600 hover:text-blue-800 text-sm"
+                  >
+                    + Add Body Path Field
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {Object.entries(formData.config.requestBodyPath).map(([key, value]) => (
+                    <div key={key} className="flex gap-2">
+                      <select
+                        value={value}
+                        onChange={e => {
+                          const propId = e.target.value;
+                          const prop = journey.properties.find(p => p.id === propId);
+                          if (!prop) return;
+                          setFormData(prev => {
+                            const newFields = { ...prev.config.requestBodyPath };
+                            delete newFields[key];
+                            newFields[prop.key] = value;
+                            return {
+                              ...prev,
+                              config: {
+                                ...prev.config,
+                                requestBodyPath: newFields
+                              }
+                            };
+                          });
+                        }}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="" disabled>Select property</option>
+                        {journey.properties.map((prop) => (
+                          <option key={prop.id} value={prop.id}>{prop.key}</option>
+                        ))}
+                      </select>
                       <input
                         type="text"
                         value={value}
-                        onChange={(e) => updateExtraField(key, e.target.value)}
+                        onChange={e => updateRequestBodyPathField(key, e.target.value)}
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Field value"
+                        placeholder="Body Path value"
                       />
                       <button
                         type="button"
-                        onClick={() => removeExtraField(key)}
+                        onClick={() => removeRequestBodyPathField(key)}
                         className="text-red-600 hover:text-red-800"
                       >
                         <X size={16} />
@@ -728,6 +959,15 @@ const handleOutputPropertyKeyBlur = (oldKey: string) => {
               </button>
             </div>
           </form>
+        </div>
+      )}
+      {/* JSON Previewer: show when creating or editing a function */}
+      {isEditing && (
+        <div className="mt-8">
+          <h4 className="font-medium text-gray-900 mb-2">JSON Preview</h4>
+          <pre className="bg-gray-900 text-green-200 p-4 rounded-lg overflow-x-auto text-xs">
+            {jsonPreview}
+          </pre>
         </div>
       )}
 

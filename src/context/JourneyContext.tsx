@@ -18,7 +18,7 @@ interface JourneyProviderProps {
 
 export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, initialJourney }) => {
   const createEmptyJourney = (): Journey => ({
-    id: Date.now().toString(),
+    id: '',
     name: '',
     description: '',
     properties: [],

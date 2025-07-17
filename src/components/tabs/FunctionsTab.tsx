@@ -566,9 +566,7 @@ const FunctionsTab: React.FC = () => {
               </div>
             </div>
 
-            {formData.config.method === "POST" && (
-              <>
-                <div className="mt-4">
+            <div className="mt-4">
                   <div className="flex justify-between items-center mb-2">
                     <label className="block text-sm font-medium text-gray-700">
                       Header Params
@@ -701,6 +699,8 @@ const FunctionsTab: React.FC = () => {
                   </div>
                 </div>
 
+            {formData.config.method === "POST" && (
+              <>
                 <div className="mt-4">
                   <div className="flex justify-between items-center mb-2">
                     <label className="block text-sm font-medium text-gray-700">
@@ -749,8 +749,9 @@ const FunctionsTab: React.FC = () => {
                     )}
                   </div>
                 </div>
-
-                <div className="border-t pt-4">
+              </>
+            )}
+            <div className="border-t pt-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <div className="flex justify-between items-center mb-2">
@@ -857,8 +858,6 @@ const FunctionsTab: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              </>
-            )}
             <div className="flex gap-2">
               <button
                 type="submit"

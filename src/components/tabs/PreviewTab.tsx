@@ -105,7 +105,12 @@ const PreviewTab: React.FC = () => {
     // Draw nodes
     nodes.forEach(node => {
       // Node circle
-      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      circle.setAttribute('x', (node.x - 40).toString());
+      circle.setAttribute('y', (node.y - 30).toString());
+      circle.setAttribute('width', '80');
+      circle.setAttribute('height', '60');
+      circle.setAttribute('rx', '12'); // rounded corners
       circle.setAttribute('cx', node.x.toString());
       circle.setAttribute('cy', node.y.toString());
       circle.setAttribute('r', '30');
@@ -121,7 +126,7 @@ const PreviewTab: React.FC = () => {
       text.setAttribute('x', node.x.toString());
       text.setAttribute('y', (node.y + 5).toString());
       text.setAttribute('text-anchor', 'middle');
-      text.setAttribute('font-size', '12');
+      text.setAttribute('font-size', '10');
       text.setAttribute('font-weight', 'bold');
       text.setAttribute('fill', '#1F2937');
       text.setAttribute('font-family', 'system-ui, sans-serif');
@@ -181,6 +186,10 @@ const PreviewTab: React.FC = () => {
 
   const getNodeColor = (type: string) => {
     switch (type) {
+      case 'start':
+        return '#10B981';
+      case 'end':
+        return '#F97316';
       case 'dead_end':
         return '#EF4444';
       case 'custom':

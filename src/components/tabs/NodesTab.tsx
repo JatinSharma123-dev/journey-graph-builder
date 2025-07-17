@@ -104,14 +104,17 @@ const NodesTab: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Type *
                 </label>
-                <input
-                  type="text"
+                <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="e.g., action, condition, gateway"
-                />
+                >
+                  <option value="" disabled>Select type</option>
+                  <option value="custom">Custom</option>
+                  <option value="loader">Loader</option>
+                  <option value="dead_end">Dead_End</option>
+                </select>
               </div>
             </div>
 
@@ -209,13 +212,13 @@ const NodesTab: React.FC = () => {
                   </div>
                   <div className="flex gap-2 ml-4">
                     <button
-                      onClick={() => handleEdit(node)}
+                      // onClick={() => handleEdit(node)}
                       className="text-blue-600 hover:text-blue-900 transition-colors"
                     >
                       <Edit size={16} />
                     </button>
                     <button
-                      onClick={() => handleDelete(node.id)}
+                      // onClick={() => handleDelete(node.id)}
                       className="text-red-600 hover:text-red-900 transition-colors"
                       disabled={node.type === 'start' || node.type === 'end'}
                     >

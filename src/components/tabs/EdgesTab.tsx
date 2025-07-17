@@ -115,11 +115,13 @@ const EdgesTab: React.FC = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">Select target node...</option>
-                  {journey.nodes.map((node) => (
-                    <option key={node.id} value={node.id}>
-                      {node.name} ({node.type})
-                    </option>
-                  ))}
+                  {journey.nodes.map((node) =>
+                    node.id !== formData.fromNodeId ? (
+                      <option key={node.id} value={node.id}>
+                        {node.name} ({node.type})
+                      </option>
+                    ) : null
+                  )}
                 </select>
               </div>
             </div>
@@ -181,11 +183,11 @@ const EdgesTab: React.FC = () => {
                     <div className="flex items-center gap-3 mb-2">
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-gray-900">
-                          {getNodeName(edge.fromNodeId)}
+                          <span className="text-sm text-gray-600">From Node :</span> {getNodeName(edge.fromNodeId)}
                         </span>
                         <span className="text-gray-400">→</span>
                         <span className="font-medium text-gray-900">
-                          {getNodeName(edge.toNodeId)}
+                          <span className="text-sm text-gray-600">To Node :</span> {getNodeName(edge.toNodeId)}
                         </span>
                       </div>
                     </div>

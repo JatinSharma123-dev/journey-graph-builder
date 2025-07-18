@@ -1,12 +1,25 @@
+/**
+ * Type definitions for the Journey Graph Builder application
+ * 
+ * These types define the structure of data used throughout the application.
+ * Each interface represents a core concept in the journey building process.
+ */
+
+/**
+ * Represents a data property that flows through the journey
+ */
 export interface Property {
-  id: string;
+  id: string; // Will be assigned by API, empty for new properties
   key: string;
   type: string;
   validationCondition?: string;
 }
 
+/**
+ * Represents a step or decision point in the journey flow
+ */
 export interface Node {
-  id: string;
+  id: string; // Will be assigned by API, empty for new nodes
   name: string;
   type: string;
   description: string;
@@ -15,14 +28,20 @@ export interface Node {
   y?: number;
 }
 
+/**
+ * Represents a header configuration for API functions
+ */
 export interface FunctionHeader {
   key: string;
   type: 'custom' | 'property';
   value: string;
 }
 
+/**
+ * Represents an external function (API call, etc.) that can be executed
+ */
 export interface Function {
-  id: string;
+  id: string; // Will be assigned by API, empty for new functions
   name: string;
   type: string;
   config: {
@@ -31,14 +50,19 @@ export interface Function {
     method: string;
     header_params: { [key: string]: string };
     headers: FunctionHeader[];
+    requestBody?: { [key: string]: string };
+    requestBodyPath?: { [key: string]: string };
     [key: string]: any;
   };
   input_properties: { [key: string]: string };
   output_properties: { [key: string]: string };
 }
 
+/**
+ * Represents the connection between a node and a function
+ */
 export interface NodeFunctionMapping {
-  id: string;
+  id: string; // Will be assigned by API, empty for new mappings
   name: string;
   description: string;
   nodeId: string;
@@ -46,15 +70,21 @@ export interface NodeFunctionMapping {
   condition: string;
 }
 
+/**
+ * Represents a connection between two nodes in the journey flow
+ */
 export interface Edge {
-  id: string;
+  id: string; // Will be assigned by API, empty for new edges
   fromNodeId: string;
   toNodeId: string;
   validationCondition: string;
 }
 
+/**
+ * Represents a complete journey with all its components
+ */
 export interface Journey {
-  id: string;
+  id: string; // Will be assigned by API, empty for new journeys
   name: string;
   description: string;
   properties: Property[];
@@ -67,6 +97,9 @@ export interface Journey {
   updatedAt: Date;
 }
 
+/**
+ * Context type for managing journey state and operations
+ */
 export interface JourneyContextType {
   journey: Journey;
   updateJourney: (updates: Partial<Journey>) => void;

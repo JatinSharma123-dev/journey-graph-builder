@@ -1,8 +1,20 @@
+/**
+ * Journey Context Provider
+ * 
+ * This context manages the state of a journey and provides methods to modify it.
+ * It handles all CRUD operations for journey components (properties, nodes, functions, etc.)
+ */
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Journey, JourneyContextType, Property, Node, Function, NodeFunctionMapping, Edge } from '../types/journey';
 
+// Create the context
 const JourneyContext = createContext<JourneyContextType | undefined>(undefined);
 
+/**
+ * Hook to access the journey context
+ * Must be used within a JourneyProvider
+ */
 export const useJourney = () => {
   const context = useContext(JourneyContext);
   if (!context) {
@@ -16,7 +28,14 @@ interface JourneyProviderProps {
   initialJourney?: Journey;
 }
 
+/**
+ * Journey Provider Component
+ * Wraps components that need access to journey state and operations
+ */
 export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, initialJourney }) => {
+  /**
+   * Creates an empty journey with default values
+   */
   const createEmptyJourney = (): Journey => ({
     id: '',
     name: '',
@@ -33,14 +52,23 @@ export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, init
 
   const [journey, setJourney] = useState<Journey>(initialJourney || createEmptyJourney());
 
+  /**
+   * Updates journey with partial data and sets updatedAt timestamp
+   */
   const updateJourney = (updates: Partial<Journey>) => {
     setJourney(prev => ({ ...prev, ...updates, updatedAt: new Date() }));
   };
 
+  // Property management functions
+  
+  /**
+   * Adds a new property to the journey
+   * Note: ID will be assigned by API, keeping empty for now
+   */
   const addProperty = (property: Omit<Property, 'id'>) => {
     const newProperty: Property = {
       ...property,
-      id: Date.now().toString()
+      id: '' // Will be assigned by API
     };
     setJourney(prev => ({
       ...prev,
@@ -49,6 +77,9 @@ export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, init
     }));
   };
 
+  /**
+   * Updates an existing property
+   */
   const updateProperty = (id: string, property: Partial<Property>) => {
     setJourney(prev => ({
       ...prev,
@@ -57,6 +88,9 @@ export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, init
     }));
   };
 
+  /**
+   * Deletes a property and removes it from all nodes that reference it
+   */
   const deleteProperty = (id: string) => {
     setJourney(prev => ({
       ...prev,
@@ -66,10 +100,16 @@ export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, init
     }));
   };
 
+  // Node management functions
+  
+  /**
+   * Adds a new node to the journey
+   * Note: ID will be assigned by API, keeping empty for now
+   */
   const addNode = (node: Omit<Node, 'id'>) => {
     const newNode: Node = {
       ...node,
-      id: Date.now().toString()
+      id: '' // Will be assigned by API
     };
     setJourney(prev => ({
       ...prev,
@@ -78,6 +118,9 @@ export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, init
     }));
   };
 
+  /**
+   * Updates an existing node
+   */
   const updateNode = (id: string, node: Partial<Node>) => {
     setJourney(prev => ({
       ...prev,
@@ -86,6 +129,9 @@ export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, init
     }));
   };
 
+  /**
+   * Deletes a node and all related edges and mappings
+   */
   const deleteNode = (id: string) => {
     setJourney(prev => ({
       ...prev,
@@ -96,10 +142,16 @@ export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, init
     }));
   };
 
+  // Function management functions
+  
+  /**
+   * Adds a new function to the journey
+   * Note: ID will be assigned by API, keeping empty for now
+   */
   const addFunction = (func: Omit<Function, 'id'>) => {
     const newFunction: Function = {
       ...func,
-      id: Date.now().toString()
+      id: '' // Will be assigned by API
     };
     setJourney(prev => ({
       ...prev,
@@ -108,6 +160,9 @@ export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, init
     }));
   };
 
+  /**
+   * Updates an existing function
+   */
   const updateFunction = (id: string, func: Partial<Function>) => {
     setJourney(prev => ({
       ...prev,
@@ -116,6 +171,9 @@ export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, init
     }));
   };
 
+  /**
+   * Deletes a function and all mappings that reference it
+   */
   const deleteFunction = (id: string) => {
     setJourney(prev => ({
       ...prev,
@@ -125,10 +183,16 @@ export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, init
     }));
   };
 
+  // Mapping management functions
+  
+  /**
+   * Adds a new node-function mapping
+   * Note: ID will be assigned by API, keeping empty for now
+   */
   const addMapping = (mapping: Omit<NodeFunctionMapping, 'id'>) => {
     const newMapping: NodeFunctionMapping = {
       ...mapping,
-      id: Date.now().toString()
+      id: '' // Will be assigned by API
     };
     setJourney(prev => ({
       ...prev,
@@ -137,6 +201,9 @@ export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, init
     }));
   };
 
+  /**
+   * Updates an existing mapping
+   */
   const updateMapping = (id: string, mapping: Partial<NodeFunctionMapping>) => {
     setJourney(prev => ({
       ...prev,
@@ -145,6 +212,9 @@ export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, init
     }));
   };
 
+  /**
+   * Deletes a mapping
+   */
   const deleteMapping = (id: string) => {
     setJourney(prev => ({
       ...prev,
@@ -153,25 +223,29 @@ export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, init
     }));
   };
 
+  // Edge management functions
+  
+  /**
+   * Adds a new edge between nodes
+   * Note: ID will be assigned by API, keeping empty for now
+   */
   const addEdge = (edge: Omit<Edge, 'id'>) => {
     const newEdge: Edge = {
       ...edge,
-      id: Date.now().toString()
+      id: '' // Will be assigned by API
     };
     setJourney(prev => {
-      // Remove default edge between start and end nodes when adding first custom edge
-      const filteredEdges = prev.edges.length === 0 ? 
-        prev.edges.filter(e => !(e.fromNodeId === 'start' && e.toNodeId === 'end')) : 
-        prev.edges;
-      
       return {
         ...prev,
-        edges: [...filteredEdges, newEdge],
+        edges: [...prev.edges, newEdge],
         updatedAt: new Date()
       };
     });
   };
 
+  /**
+   * Updates an existing edge
+   */
   const updateEdge = (id: string, edge: Partial<Edge>) => {
     setJourney(prev => ({
       ...prev,
@@ -180,6 +254,9 @@ export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, init
     }));
   };
 
+  /**
+   * Deletes an edge
+   */
   const deleteEdge = (id: string) => {
     setJourney(prev => ({
       ...prev,
@@ -188,6 +265,10 @@ export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, init
     }));
   };
 
+  /**
+   * Saves the journey to local storage
+   * In production, this would make an API call
+   */
   const saveJourney = () => {
     const savedJourneys = JSON.parse(localStorage.getItem('journeys') || '[]');
     const existingIndex = savedJourneys.findIndex((j: Journey) => j.id === journey.id);
@@ -201,10 +282,14 @@ export const JourneyProvider: React.FC<JourneyProviderProps> = ({ children, init
     localStorage.setItem('journeys', JSON.stringify(savedJourneys));
   };
 
+  /**
+   * Toggles the active state of the journey
+   */
   const activateJourney = () => {
     setJourney(prev => ({ ...prev, isActive: !prev.isActive, updatedAt: new Date() }));
   };
 
+  // Provide all context values
   return (
     <JourneyContext.Provider value={{
       journey,

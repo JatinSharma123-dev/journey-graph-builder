@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { LucideIcon } from 'lucide-react';
+import { DivideIcon as LucideIcon } from 'lucide-react';
 
 interface ButtonProps {
   children: React.ReactNode;

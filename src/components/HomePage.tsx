@@ -105,6 +105,16 @@ const HomePage: React.FC<HomePageProps> = ({ onEditJourney, onPreviewJourney, on
           <p className="text-gray-600">Create and manage your journey flows with visual graph builder</p>
         </div>
 
+        {/* Create Journey Button */}
+        <div className="mb-6">
+          <Button
+            onClick={onCreateJourney}
+            variant="primary"
+            icon={Plus}
+          >
+            Add Journey
+          </Button>
+        </div>
 
         {/* Journey Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

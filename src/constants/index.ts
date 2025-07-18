@@ -1,6 +1,8 @@
 // Application constants
 
 export const NODE_TYPES = {
+  START: 'start',
+  END: 'end',
   DEAD_END: 'dead_end',
   CUSTOM: 'custom',
   LOADER: 'loader'

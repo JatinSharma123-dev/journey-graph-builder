@@ -49,10 +49,7 @@ const NodesTab: React.FC = () => {
   };
 
   const handleDelete = (id: string) => {
-    if (id === 'start' || id === 'end') {
-      return;
-    }
-    
+    // The context will handle preventing deletion of start/end nodes
     deleteNode(id);
   };
 
@@ -111,6 +108,8 @@ const NodesTab: React.FC = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="" disabled>Select type</option>
+                  <option value="start">START</option>
+                  <option value="end">END</option>
                   <option value="dead_end">DEAD_END</option>
                   <option value="custom">CUSTOM</option>
                   <option value="loader">LOADER</option>
@@ -221,6 +220,7 @@ const NodesTab: React.FC = () => {
                       onClick={() => handleDelete(node.id)}
                       className="text-red-600 hover:text-red-900 transition-colors"
                       disabled={node.type === 'start' || node.type === 'end'}
+                      title={node.type === 'start' || node.type === 'end' ? 'Cannot delete start/end nodes' : 'Delete node'}
                     >
                       <Trash2 size={16} />
                     </button>

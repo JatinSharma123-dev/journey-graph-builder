@@ -83,8 +83,13 @@ const CreateJourneyTab: React.FC = () => {
             Journey {journey.name ? 'Updated' : 'Created'} Successfully!
           </p>
           <p className="text-green-700 text-sm mt-1">
-            You can now proceed to add properties, nodes, and functions to your journey.
+            Your journey has been created with default Start and End nodes connected by a default edge. You can now proceed to add properties, custom nodes, and functions to your journey.
           </p>
+          <div className="mt-3 p-3 bg-blue-50 rounded border-l-4 border-blue-400">
+            <p className="text-blue-800 text-sm">
+              <strong>Note:</strong> The default edge between Start and End nodes will be automatically removed when you create your first custom edge from the Start node.
+            </p>
+          </div>
         </div>
       )}
     </div>

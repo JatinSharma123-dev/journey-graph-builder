@@ -184,6 +184,10 @@ filteredEdges.forEach(edge => {
 
   const getNodeColor = (type: string) => {
     switch (type) {
+      case 'start':
+        return '#10B981'; // Green for start
+      case 'end':
+        return '#EF4444'; // Red for end
       case 'dead_end':
         return '#EF4444';
       case 'custom':
@@ -237,6 +241,14 @@ filteredEdges.forEach(edge => {
         <h3 className="font-medium text-gray-900">Journey Graph</h3>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+          <span className="text-sm text-gray-600">Start</span>
+          </div>
+          <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+          <span className="text-sm text-gray-600">End</span>
+          </div>
+          <div className="flex items-center gap-2">
           <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
           <span className="text-sm text-gray-600">Custom</span>
           </div>
@@ -245,7 +257,7 @@ filteredEdges.forEach(edge => {
           <span className="text-sm text-gray-600">Loader</span>
           </div>
           <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+          <div className="w-4 h-4 bg-gray-500 rounded-full"></div>
           <span className="text-sm text-gray-600">Dead_End</span>
           </div>
           <div className="flex items-center gap-2">

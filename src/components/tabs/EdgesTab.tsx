@@ -55,7 +55,7 @@ const EdgesTab: React.FC = () => {
   };
 
   const availableNodes = journey.nodes.filter(
-    (node) => node.type !== "start" && node.type !== "end"
+    (node) => true // Allow all nodes for edge creation
   );
   const fromNodes = journey.nodes;
   const toNodes = journey.nodes;
@@ -189,6 +189,11 @@ const EdgesTab: React.FC = () => {
                         <span className="font-medium text-gray-900">
                           <span className="text-sm text-gray-600">To Node :</span>{getNodeName(edge.toNodeId)}
                         </span>
+                        {edge.isDefault && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            Default
+                          </span>
+                        )}
                       </div>
                     </div>
                     {edge.validationCondition && (
@@ -196,17 +201,26 @@ const EdgesTab: React.FC = () => {
                         <strong>Condition:</strong> {edge.validationCondition}
                       </div>
                     )}
+                    {edge.isDefault && (
+                      <div className="text-sm text-amber-600 mt-1">
+                        <strong>Note:</strong> This default edge will be automatically removed when you create a new edge from the Start node.
+                      </div>
+                    )}
                   </div>
                   <div className="flex gap-2 ml-4">
                     <button
                       onClick={() => handleEdit(edge)}
                       className="text-blue-600 hover:text-blue-900 transition-colors"
+                      disabled={edge.isDefault}
+                      title={edge.isDefault ? 'Cannot edit default edge' : 'Edit edge'}
                     >
                       <Edit size={16} />
                     </button>
                     <button
                       onClick={() => handleDelete(edge.id)}
                       className="text-red-600 hover:text-red-900 transition-colors"
+                      disabled={edge.isDefault}
+                      title={edge.isDefault ? 'Default edge will be removed automatically' : 'Delete edge'}
                     >
                       <Trash2 size={16} />
                     </button>

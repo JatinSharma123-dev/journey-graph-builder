@@ -78,6 +78,7 @@ export interface Edge {
   fromNodeId: string;
   toNodeId: string;
   validationCondition: string;
+  isDefault?: boolean; // Flag to identify the default edge between start and end
 }
 
 /**
